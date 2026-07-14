@@ -3,10 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: proxy-checker
     restart: unless-stopped
     ports:
-      - "8888:8888"
+      - "${HOST_PORT:-8888}:8888"
     volumes:
       # Persist runtime data across restarts
       - proxy-checker-repo:/app/repo_data
