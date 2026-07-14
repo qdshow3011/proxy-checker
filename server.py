@@ -84,14 +84,9 @@ try:
 except ImportError:
     pass
 
-# === Try to install Xvfb for headless Chrome ===
-XVFB_AVAILABLE = False
-try:
-    import subprocess
-    _xvfb_check = subprocess.run(["which", "Xvfb"], capture_output=True, timeout=3)
-    XVFB_AVAILABLE = _xvfb_check.returncode == 0
-except Exception:
-    pass
+# === Try to detect Xvfb for headless Chrome ===
+import shutil
+XVFB_AVAILABLE = shutil.which("Xvfb") is not None
 
 LOG_FILE_PATH = str(get_config_value("log_file", "LOG_FILE", os.path.join(BASE_DIR, "server.log")))
 if not os.path.isabs(LOG_FILE_PATH):
@@ -1953,7 +1948,7 @@ class Handler(SimpleHTTPRequestHandler):
             log.error(f"POST error: {e}")
             try:
                 self._json(500, {"error": str(e)})
-            except:
+            except Exception:
                 pass
 
     def do_OPTIONS(self):

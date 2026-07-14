@@ -1,0 +1,37 @@
+services:
+  proxy-checker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: proxy-checker
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    volumes:
+      # Persist runtime data across restarts
+      - proxy-checker-repo:/app/repo_data
+      - proxy-checker-checked:/app/checked_data
+      - proxy-checker-auto:/app/auto_data
+      - proxy-checker-logs:/app/run_logs
+      # Optional: mount a custom config file
+      # - ./config.local.json:/app/config.local.json:ro
+    environment:
+      - PORT=8888
+      - AUTH_PASSWORD=linux.do
+      - APP_TIMEZONE=UTC
+      # Override any config.json value via env:
+      # - CHECK_ROUNDS=2
+      # - MAX_CONCURRENT=30
+      # - TIMEOUT=12
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+
+volumes:
+  proxy-checker-repo:
+  proxy-checker-checked:
+  proxy-checker-auto:
+  proxy-checker-logs:
